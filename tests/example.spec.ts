@@ -1,11 +1,22 @@
 import { test, expect } from '@playwright/test';
+import { describe } from 'node:test';
 
-for(let i = 0; i < 300; i++) {
-  test('Form submit should redirect '+i, async ({ page }) => {
-    await page.goto('/form');
-    await page.fill('input[placeholder="Name"]', 'My Name');
-    await page.fill('input[placeholder="Message"]', 'My Message');
-    await page.click("button[type='submit']");
-    await expect(page).toHaveURL('/');
+describe('Navigation tests', () => {
+  test('Slow button should time out', async ({ page }) => {
+    await page.goto('/');
+    await page.getByTestId('slow-button').click();
+    // sleep a few seconds to give the page time to navigate, since the "not" will cause this to resolve instantly
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await expect(page).not.toHaveURL('/verySlowTargetPage', {
+      timeout: 2000
+    });
   });
-}
+
+  test("Normal button should work", async ({ page }) => {
+    await page.goto('/');
+    await page.getByTestId('normal-button').click();
+    await expect(page).toHaveURL('/normalTargetPage', {
+      timeout: 2000
+    });
+  });
+});

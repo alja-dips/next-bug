@@ -1,17 +1,22 @@
-import { inMemoryStore } from "./store";
+"use client";
+import { useRouter } from "next/navigation";
 
-export default async function Home() {
-  // sleep 500ms
-  await new Promise((resolve) => setTimeout(resolve, 500));
+export default function Home() {
+  const router = useRouter();
   return (
-    <ul>
-      {
-        inMemoryStore.map((obj, index) => (
-          <li key={index}>
-            <strong>{obj.name}</strong>: {obj.message}
-          </li>
-        ))
-      }
-    </ul>
+    <div>
+      <button
+        onClick={() => router.push("/verySlowTargetPage")}
+        data-testid="slow-button"
+      >
+        Go to the slow page
+      </button>
+      <button
+        onClick={() => router.push("/normalTargetPage")}
+        data-testid="normal-button"
+      >
+        Go to the normal page
+      </button>
+    </div>
   );
 }
